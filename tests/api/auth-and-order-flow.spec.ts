@@ -1,10 +1,11 @@
 import { expect, test } from '@playwright/test'
 import { StatusCodes } from 'http-status-codes'
 import { LoginDto } from '../dto/login-dto'
-import { ApiClient } from './api-client'
+import { OrderDto } from '../dto/order-dto'
 
 const serviceURL = 'https://backend.tallinn-learning.ee/'
 const loginPath = 'login/student'
+const orderPath = 'orders'
 
 // JWT pattern in the form of a regular expression
 const jwtPattern = /^eyJhb[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$/
@@ -38,9 +39,24 @@ test.describe('Tallinn delivery API tests', () => {
     expect(responseBody).toBe('')
   })
 
-  test('login and create order with api client', async ({ request }) => {
-    const apiClient = await ApiClient.getInstance(request)
-    const orderId = await apiClient.createOrder()
-    console.log('orderId:', orderId)
+  test('login and create order', async ({ request }) => {
+    const requestBody = LoginDto.createLoginWithCorrectData()
+    const response = await request.post(`${serviceURL}${loginPath}`, {
+      data: requestBody,
+    })
+    const jwt = await response.text()
+    const orderResponse = await request.post(`${serviceURL}${orderPath}`, {
+      data: OrderDto.createOrderWithRandomData(),
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    })
+
+    const orderResponseBody = await orderResponse.json()
+    console.log('orderResponse status:', orderResponse.status())
+    console.log('orderResponse:', orderResponseBody)
+    expect.soft(orderResponse.status()).toBe(StatusCodes.OK)
+    expect.soft(orderResponseBody.status).toBe('OPEN')
+    expect.soft(orderResponseBody.id).toBeDefined()
   })
 })

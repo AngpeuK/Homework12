@@ -6,6 +6,7 @@ import { OrderDto } from '../dto/order-dto'
 
 const serviceURL = 'https://backend.tallinn-learning.ee/'
 const loginPath = 'login/student'
+const orderPath = 'orders'
 
 export class ApiClient {
   static instance: ApiClient
@@ -29,20 +30,21 @@ export class ApiClient {
     const authResponse = await this.request.post(`${serviceURL}${loginPath}`, {
       data: LoginDto.createLoginWithCorrectData(),
     })
-    console.log('Auth response: ', authResponse)
-
+    // Check response status for negative cases
     if (authResponse.status() !== StatusCodes.OK) {
+      console.log('Authorization failed')
       throw new Error(`Request failed with status ${authResponse.status()}`)
     }
 
+    // Save the JWT token as a client property
     this.jwt = await authResponse.text()
     console.log('jwt received:')
     console.log(this.jwt)
   }
 
-  async createOrder(): Promise<number> {
+  async createOrderAndReturnOrderId(): Promise<number> {
     console.log('Creating order...')
-    const response = await this.request.post(`${serviceURL}orders`, {
+    const response = await this.request.post(`${serviceURL}${orderPath}`, {
       data: OrderDto.createOrderWithRandomData(),
       headers: {
         Authorization: `Bearer ${this.jwt}`,
