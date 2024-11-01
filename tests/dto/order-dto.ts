@@ -23,14 +23,26 @@ export class OrderDto {
   }
 
   // add a method to create a new instance with random data
-  static createOrderWithRandomData(randomOrderId: boolean = false): OrderDto {
+  static createOrderWithRandomData(): OrderDto {
     return new OrderDto(
       'OPEN',
       Math.floor(Math.random() * 100),
       'John Doe',
       '+123456789',
       'Urgent order',
-      randomOrderId ? Math.floor(Math.random() * 100) : undefined,
+      Math.floor(Math.random() * 100),
+    )
+  }
+
+  // add a method to create a new instance with orderid = undefined
+  static createOrderWithoutId(): OrderDto {
+    return new OrderDto(
+      'OPEN',
+      Math.floor(Math.random() * 100),
+      'John Doe',
+      '+123456789',
+      'Urgent order',
+      undefined,
     )
   }
 }

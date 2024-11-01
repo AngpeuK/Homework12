@@ -35,7 +35,7 @@ test.describe('Simple solution API tests', () => {
     request,
   }) => {
     // prepare request body with dto pattern
-    const requestBody = OrderDto.createOrderWithRandomData(true)
+    const requestBody = OrderDto.createOrderWithoutId()
     const response = await request.post(serviceMockedURL, {
       data: requestBody,
     })

@@ -46,7 +46,7 @@ test.describe('Tallinn delivery API tests', () => {
     })
     const jwt = await response.text()
     const orderResponse = await request.post(`${serviceURL}${orderPath}`, {
-      data: OrderDto.createOrderWithRandomData(),
+      data: OrderDto.createOrderWithoutId(),
       headers: {
         Authorization: `Bearer ${jwt}`,
       },
