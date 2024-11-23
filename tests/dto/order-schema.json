@@ -5,7 +5,10 @@
       "type": "string"
     },
     "courierId": {
-      "type": ["null", "string"]
+      "type": [
+        "null",
+        "string"
+      ]
     },
     "customerName": {
       "type": "string"
@@ -20,5 +23,12 @@
       "type": "number"
     }
   },
-  "required": ["status", "courierId", "customerName", "customerPhone", "comment", "id"]
+  "required": [
+    "status",
+    "courierId",
+    "customerName",
+    "customerPhone",
+    "comment",
+    "id"
+  ]
 }
