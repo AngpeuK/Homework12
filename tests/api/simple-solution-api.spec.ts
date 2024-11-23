@@ -6,7 +6,7 @@ import Ajv from 'ajv'
 import schema from '../dto/order-schema.json'
 
 const serviceMockedURL = 'https://backend.tallinn-learning.ee/test-orders'
-
+//
 // add test describe as test suite
 test.describe('Simple solution API tests', () => {
   test('get order with correct id should receive code 200', async ({ request }) => {
