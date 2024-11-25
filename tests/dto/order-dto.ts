@@ -60,7 +60,7 @@ export class OrderDto {
   }
 
   static generatePhoneNumber(): string {
-    const randomDigits = Math.floor(10000 + Math.random() * 10000) // Генерация 5 случайных цифр
+    const randomDigits = Math.floor(10000 + Math.random() * 10000)
     return `+372${randomDigits}`
   }
 
