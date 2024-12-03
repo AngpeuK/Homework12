@@ -39,8 +39,6 @@ test.describe('Tallinn delivery API tests', () => {
     }
   })
 
-
-
   test('2 login create and get order', async ({ request }) => {
     const requestBody = LoginDto.createLoginWithCorrectData()
     const loginResponse = await request.post(`${serviceURL}${loginPath}`, {
@@ -74,7 +72,7 @@ test.describe('Tallinn delivery API tests', () => {
     const orderId = orderResponseBody.id
     const getResponse = await request.get(`${serviceURL}${orderPath}/${orderId}`, {
       headers: {
-        Authorization: `Bearer ${jwt}`
+        Authorization: `Bearer ${jwt}`,
       },
     })
 
@@ -86,7 +84,6 @@ test.describe('Tallinn delivery API tests', () => {
       getResponse.status() !== StatusCodes.INTERNAL_SERVER_ERROR &&
       getResponse.status() !== StatusCodes.BAD_REQUEST
     ) {
-
       expect.soft(getResponse.status()).toBe(StatusCodes.OK)
       expect.soft(getResponseBody.status).toBe('OPEN')
       expect.soft(getResponseBody.id).toBe(orderId)
@@ -128,9 +125,8 @@ test.describe('Tallinn delivery API tests', () => {
     const orderId = orderResponseBody.id
     const deleteResponse = await request.delete(`${serviceURL}${orderPath}/${orderId}`, {
       headers: {
-        Authorization: `Bearer ${jwt}`
+        Authorization: `Bearer ${jwt}`,
       },
-
     })
 
     console.log('3 Received DeleteOrderResponse status:', deleteResponse.status())
@@ -140,7 +136,6 @@ test.describe('Tallinn delivery API tests', () => {
       deleteResponse.status() !== StatusCodes.INTERNAL_SERVER_ERROR &&
       deleteResponse.status() !== StatusCodes.BAD_REQUEST
     ) {
-
       expect.soft(deleteResponse.status()).toBe(StatusCodes.OK)
     }
   })
