@@ -49,12 +49,16 @@ export class OrderDto {
       'Atsa',
       'Yiska',
       'Isi',
-      'Cholena',
+      'Mika',
       'Nita',
     ]
 
     const firstPart = firstParts[Math.floor(Math.random() * firstParts.length)]
     const secondPart = secondParts[Math.floor(Math.random() * secondParts.length)]
+
+    if (firstPart.length + secondPart.length + 1 > 12) {
+      return `${firstPart}`
+    }
 
     return `${firstPart} ${secondPart}`
   }
