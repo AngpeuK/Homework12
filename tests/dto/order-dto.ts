@@ -1,6 +1,6 @@
 export class OrderDto {
   status: string
-  courierId: number
+  courierId: number | undefined
   customerName: string
   customerPhone: string
   comment: string
@@ -8,7 +8,7 @@ export class OrderDto {
 
   constructor(
     status: string,
-    courierId: number,
+    courierId: number | undefined,
     customerName: string,
     customerPhone: string,
     comment: string,
@@ -22,26 +22,59 @@ export class OrderDto {
     this.id = id
   }
 
-  // add a method to create a new instance with random data
+  static generateNativeAmericanName(): string {
+    const firstParts = [
+      'Ahanu',
+      'Chenoa',
+      'Takwita',
+      'Nashoba',
+      'Ahyoka',
+      'Yuma',
+      'Tasunka',
+      'Kanti',
+      'Adoette',
+      'Mansi',
+      'Winona',
+      'Shikoba',
+    ]
+
+    const secondParts = [
+      'Ayita',
+      'Maka',
+      'Waya',
+      'Aponi',
+      'Kimi',
+      'Zuni',
+      'Tala',
+      'Atsa',
+      'Yiska',
+      'Isi',
+      'Mika',
+      'Nita',
+    ]
+
+    const firstPart = firstParts[Math.floor(Math.random() * firstParts.length)]
+    const secondPart = secondParts[Math.floor(Math.random() * secondParts.length)]
+
+    if (firstPart.length + secondPart.length + 1 > 12) {
+      return `${firstPart}`
+    }
+
+    return `${firstPart} ${secondPart}`
+  }
+
+  static generatePhoneNumber(): string {
+    const randomDigits = Math.floor(10000 + Math.random() * 10000)
+    return `+372${randomDigits}`
+  }
+
   static createOrderWithRandomData(): OrderDto {
     return new OrderDto(
       'OPEN',
-      Math.floor(Math.random() * 100),
-      'John Doe',
-      '+123456789',
-      'Urgent order',
-      Math.floor(Math.random() * 100),
-    )
-  }
-
-  // add a method to create a new instance with orderid = undefined
-  static createOrderWithoutId(): OrderDto {
-    return new OrderDto(
-      'OPEN',
-      Math.floor(Math.random() * 100),
-      'John Doe',
-      '+123456789',
-      'Urgent order',
+      undefined,
+      this.generateNativeAmericanName(),
+      this.generatePhoneNumber(),
+      'Not spicy please',
       undefined,
     )
   }

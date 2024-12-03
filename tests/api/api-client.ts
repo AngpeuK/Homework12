@@ -1,4 +1,4 @@
-import { APIRequestContext } from 'playwright'
+import { APIRequestContext, APIResponse } from 'playwright'
 import { LoginDto } from '../dto/login-dto'
 import { StatusCodes } from 'http-status-codes'
 import { expect } from '@playwright/test'
@@ -30,13 +30,12 @@ export class ApiClient {
     const authResponse = await this.request.post(`${serviceURL}${loginPath}`, {
       data: LoginDto.createLoginWithCorrectData(),
     })
-    // Check response status for negative cases
+
     if (authResponse.status() !== StatusCodes.OK) {
       console.log('Authorization failed')
       throw new Error(`Request failed with status ${authResponse.status()}`)
     }
 
-    // Save the JWT token as a client property
     this.jwt = await authResponse.text()
     console.log('jwt received:')
     console.log(this.jwt)
@@ -52,11 +51,75 @@ export class ApiClient {
     })
     console.log('Order response: ', response)
 
-    expect(response.status()).toBe(StatusCodes.OK)
-    const responseBody = await response.json()
-    console.log('Order created: ')
-    console.log(responseBody)
+    if (
+      response.status() !== StatusCodes.INTERNAL_SERVER_ERROR &&
+      response.status() !== StatusCodes.BAD_REQUEST
+    ) {
+      expect(response.status()).toBe(StatusCodes.OK)
+      const responseBody = await response.json()
+      console.log('Order created: ')
+      console.log(responseBody)
 
-    return responseBody.id
+      expect.soft(responseBody.status).toBe('OPEN')
+      expect.soft(responseBody.id).toBeDefined()
+      console.log(responseBody.status)
+
+      return responseBody.id
+    } else {
+      console.error(`Failed to create order. HTTP Status: ${response.status()}`)
+      throw new Error(`Request failed with status ${response.status()}`)
+    }
+  }
+
+  async getOrderbyId(orderId: number): Promise<APIResponse> {
+    console.log('Getting order...')
+    if (!this.jwt) throw new Error('Incorrect Credentials')
+
+    const response = await this.request.get(`${serviceURL}${orderPath}/${orderId}`, {
+      headers: {
+        Authorization: `Bearer ${this.jwt}`,
+      },
+    })
+
+    if (
+      response.status() !== StatusCodes.INTERNAL_SERVER_ERROR &&
+      response.status() !== StatusCodes.BAD_REQUEST
+    ) {
+      expect(response.status()).toBe(StatusCodes.OK)
+      const responseBody = await response.json()
+      console.log('Order retrieved: ')
+      console.log(responseBody)
+      expect.soft(responseBody.status).toBe('OPEN')
+      expect.soft(responseBody.id).toBe(orderId)
+    } else {
+      console.error(`Failed to get order. HTTP Status: ${response.status()}`)
+      throw new Error(`Request failed with status ${response.status()}`)
+    }
+
+    return response
+  }
+
+  async deleteOrderById(orderId: number): Promise<APIResponse> {
+    console.log('Deleting order...')
+    if (!this.jwt) throw new Error('Incorrect Credentials')
+
+    const response = await this.request.delete(`${serviceURL}${orderPath}/${orderId}`, {
+      headers: {
+        Authorization: `Bearer ${this.jwt}`,
+      },
+    })
+
+    if (
+      response.status() !== StatusCodes.INTERNAL_SERVER_ERROR &&
+      response.status() !== StatusCodes.BAD_REQUEST
+    ) {
+      expect(response.status()).toBe(StatusCodes.OK)
+      console.log(`Order with ID ${orderId} deleted successfully`)
+    } else {
+      console.error(`Failed to delete order. HTTP Status: ${response.status()}`)
+      throw new Error(`Request failed with status ${response.status()}`)
+    }
+
+    return response
   }
 }
